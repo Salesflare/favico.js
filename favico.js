@@ -235,7 +235,7 @@
 			_context.clearRect(0, 0, _w, _h);
 			_context.drawImage(_img, 0, 0, _w, _h);
 			_context.beginPath();
-			_context.font = _opt.fontStyle + " " + Math.floor(opt.h * (opt.n > 99 ? 0.85 : 1)) + "px " + _opt.fontFamily;
+			_context.font = _opt.fontStyle + " " + Math.floor(opt.h * (opt.n > 99 || opt.n.length > 2 ? 0.8 : 0.9)) + "px " + _opt.fontFamily;
 			_context.textAlign = 'center';
 			if (more) {
 				_context.moveTo(opt.x + opt.w / 2, opt.y);
@@ -552,28 +552,24 @@
 				elm.setAttribute('src', url);
 			} else {
 				//if is attached to fav icon
-				if (_browser.ff || _browser.opera) {
-					//for FF we need to "recreate" element, atach to dom and remove old <link>
-					//var originalType = _orig.getAttribute('rel');
-					var old = _orig[_orig.length - 1];
-					var newIcon = _doc.createElement('link');
-					_orig = [newIcon];
-					//_orig.setAttribute('rel', originalType);
-					if (_browser.opera) {
-						newIcon.setAttribute('rel', 'icon');
+				var head = _doc.getElementsByTagName('head')[0];
+				var links = _doc.getElementsByTagName('link');
+
+				//Remove old links
+				for(var i=0, len=links.length; i < len; i++) {
+					var relAttribute = typeof(links[i]) !== 'undefined' && links[i].getAttribute('rel');
+
+					if (relAttribute && relAttribute !== 'apple-touch-icon' && relAttribute.match(/\bicon\b/)) {
+						head.removeChild(links[i]);
 					}
-					newIcon.setAttribute('rel', 'icon');
-					newIcon.setAttribute('type', 'image/png');
-					_doc.getElementsByTagName('head')[0].appendChild(newIcon);
-					newIcon.setAttribute('href', url);
-					if (old.parentNode) {
-						old.parentNode.removeChild(old);
-					}
-				} else {
-					_orig.forEach(function(icon) {
-						icon.setAttribute('href', url);
-					});
 				}
+
+				// Add new one
+				_orig = _doc.createElement('link');
+				_orig.setAttribute('rel', 'icon');
+				_orig.setAttribute('type', 'image/png');
+				_orig.setAttribute('href', url);
+				head.appendChild(_orig);
 			}
 		};
 
