@@ -1,6 +1,6 @@
 {
   "name": "@salesflare/favico.js",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Favico.js is a library to manipulate the favicon, adding alert badges, render images or videos.",
   "main": "favico.js",
   "private": false,
